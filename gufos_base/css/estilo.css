@@ -5,6 +5,7 @@
     --branco:#ffffff;
     --fundo: #f5f5f5;
     --cinza: #cccccc;
+    --cinzaescuro: #707070;
 }
 *{
     margin:0;
@@ -46,9 +47,6 @@ header ul{
 }
 header ul li{
     margin: 0px 30px;
-}
-main{
-   
 }
 table, td, tr, th{
     border: solid 1px var(--cinza);
@@ -171,5 +169,71 @@ footer{
 .home h1{
     font-size: 70px;
 }
+.home_eventos{
+    text-align: center;
+    margin: 20px 0px 0px 0px; 
+}
+.home_eventos h2{
+    font-size: 30px;
+    color: var(--cinzaescuro);
+}
+.home_eventos hr{
+    width: 200px;
+    margin: auto;
+    height: 2px;
+    background-color: var(--azul);
+}
+.container_eventos{
+    display: flex;
+    justify-content: space-between;
+    width: 1100px;
+    margin:auto;
+}
+.card_eventos{
+    background-color: var(--branco);
+    width: 190px;
+    margin: 20px 0px 20px 0px;
+    padding-bottom: 10px;
+    -webkit-box-shadow: 3px 3px 6px 0px rgba(204,204,204,1);
+    -moz-box-shadow: 3px 3px 6px 0px rgba(204,204,204,1);
+    box-shadow: 3px 3px 6px 0px rgba(204,204,204,1);
+}
+.card_eventos h3{
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--lilas);
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+.card_eventos p{
+    text-align: justify;
+    width: 160px;
+    margin: auto;
+}
+.home_visao{
+    background-image: linear-gradient(rgba(183,39,255,0.6),rgba(183,39,255,0.6)),url(../imagens/visao.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 300px;
+    color: white;
+    font-family: Arial;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.home_visao p{
+    width: 1100px;
+}
+.home_contato h2{
+}
+.container_contato{
+    display: flex;
+    justify-content: center;
+}
+
+
 
 

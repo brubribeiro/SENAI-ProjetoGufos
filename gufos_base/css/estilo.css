@@ -227,11 +227,19 @@ footer{
 .home_visao p{
     width: 1100px;
 }
-.home_contato h2{
+.home_contato{
+    width: 1100px;
+    margin: auto;
+}
+.home_contato hr, .home_contato h2{
+    width: 200px;
+    margin: auto;
 }
 .container_contato{
     display: flex;
     justify-content: center;
+    text-align: justify;
+    align-items: center;
 }
 
 

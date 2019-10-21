@@ -12,66 +12,62 @@ namespace backend.Controllers
     // Definimos nossa rota do controller e dizemos que é um controller de API
     [Route("api/[controller]")]
     [ApiController]
-    public class EventoController: ControllerBase
+    public class UsuarioController: ControllerBase
     {
         bdgufosContext _contexto = new bdgufosContext();
 
-        //GET: api/Evento
-        /// <summary>
-        /// Pegamos todos os eventos cadastrados
-        /// </summary>
-        /// <returns>Lista de eventos</returns>
+        //GET: api/Usuario
         [HttpGet]
-        public async Task<ActionResult<List<Evento>>> Get()
+        public async Task<ActionResult<List<Usuario>>> Get()
         {
-            var eventos = await _contexto.Evento.Include("IdCategoriaNavigation").Include("IdLocalNavigation").ToListAsync();
+            var usuarios = await _contexto.Usuario.Include("IdTipoUsuarioNavigation").ToListAsync();
             
-            if(eventos == null){
+            if(usuarios == null){
                 return NotFound();
             }
-            return eventos;
+            return usuarios;
         }
-        //GET: api/Evento/2
+        //GET: api/Usuario/2
         [HttpGet("{id}")]
-        public async Task<ActionResult<Evento>> Get(int id)
+        public async Task<ActionResult<Usuario>> Get(int id)
         {
-            var evento = await _contexto.Evento.Include("IdCategoriaNavigation").Include("IdLocalNavigation").FirstOrDefaultAsync(e => e.IdEvento == id);
+            var usuario = await _contexto.Usuario.Include("IdTipoUsuarioNavigation").FirstOrDefaultAsync(t => t.IdTipoUsuario == id);
             
-            if(evento == null){
+            if(usuario == null){
                 return NotFound();
             }
-            return evento;
+            return usuario;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Evento>> Post(Evento evento){
+        public async Task<ActionResult<Usuario>> Post(Usuario usuario){
             try{
                 // Tratamos contra ataques de SQL Injection
-                await _contexto.AddAsync(evento);
+                await _contexto.AddAsync(usuario);
                 // Salvamos efetivamente o nosso objeto no banco
                 await _contexto.SaveChangesAsync();
             }catch(DbUpdateConcurrencyException){
                 throw;
             }
-            return evento;
+            return usuario;
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, Evento evento){
+        public async Task<ActionResult> Put(int id, Usuario usuario){
             // Se o ID do objeto não existir, ele retorna o erro 400
-            if(id != evento.IdEvento){
+            if(id != usuario.IdUsuario){
                 return BadRequest();
             }
             //Comparamos os atributos que foram modificados através do EF
-            _contexto.Entry(evento).State = EntityState.Modified;
+            _contexto.Entry(usuario).State = EntityState.Modified;
 
             try{
                 await _contexto.SaveChangesAsync();
             }catch(DbUpdateConcurrencyException){
                 // Verificamos se o objeto inserido realmente existe no banco
-                var evento_valido = await _contexto.Evento.FindAsync(id);
+                var usuario_valido = await _contexto.Usuario.FindAsync(id);
 
-                if(evento_valido == null){
+                if(usuario_valido == null){
                     return NotFound();
                 }else{
                     throw;
@@ -82,16 +78,16 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Evento>> Delete(int id){
-            var evento = await _contexto.Evento.FindAsync(id);
-            if(evento == null){
+        public async Task<ActionResult<Usuario>> Delete(int id){
+            var usuario = await _contexto.Usuario.FindAsync(id);
+            if(usuario == null){
                 return NotFound();
             }
 
-            _contexto.Evento.Remove(evento);
+            _contexto.Usuario.Remove(usuario);
             await _contexto.SaveChangesAsync();
 
-            return evento;
+            return usuario;
         }
     }
 }

@@ -12,66 +12,62 @@ namespace backend.Controllers
     // Definimos nossa rota do controller e dizemos que é um controller de API
     [Route("api/[controller]")]
     [ApiController]
-    public class EventoController: ControllerBase
+    public class PresencaController: ControllerBase
     {
         bdgufosContext _contexto = new bdgufosContext();
 
-        //GET: api/Evento
-        /// <summary>
-        /// Pegamos todos os eventos cadastrados
-        /// </summary>
-        /// <returns>Lista de eventos</returns>
+        //GET: api/Presenca
         [HttpGet]
-        public async Task<ActionResult<List<Evento>>> Get()
+        public async Task<ActionResult<List<Presenca>>> Get()
         {
-            var eventos = await _contexto.Evento.Include("IdCategoriaNavigation").Include("IdLocalNavigation").ToListAsync();
+            var presencas = await _contexto.Presenca.Include("IdUsuarioNavigation").Include("IdEventoNavigation").ToListAsync();
             
-            if(eventos == null){
+            if(presencas == null){
                 return NotFound();
             }
-            return eventos;
+            return presencas;
         }
-        //GET: api/Evento/2
+        //GET: api/Presenca/2
         [HttpGet("{id}")]
-        public async Task<ActionResult<Evento>> Get(int id)
+        public async Task<ActionResult<Presenca>> Get(int id)
         {
-            var evento = await _contexto.Evento.Include("IdCategoriaNavigation").Include("IdLocalNavigation").FirstOrDefaultAsync(e => e.IdEvento == id);
+            var presenca = await _contexto.Presenca.Include("IdUsuarioNavigation").Include("IdEventoNavigation").FirstOrDefaultAsync(p => p.IdPresenca == id);
             
-            if(evento == null){
+            if(presenca == null){
                 return NotFound();
             }
-            return evento;
+            return presenca;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Evento>> Post(Evento evento){
+        public async Task<ActionResult<Presenca>> Post(Presenca presenca){
             try{
                 // Tratamos contra ataques de SQL Injection
-                await _contexto.AddAsync(evento);
+                await _contexto.AddAsync(presenca);
                 // Salvamos efetivamente o nosso objeto no banco
                 await _contexto.SaveChangesAsync();
             }catch(DbUpdateConcurrencyException){
                 throw;
             }
-            return evento;
+            return presenca;
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, Evento evento){
+        public async Task<ActionResult> Put(int id, Presenca presenca){
             // Se o ID do objeto não existir, ele retorna o erro 400
-            if(id != evento.IdEvento){
+            if(id != presenca.IdPresenca){
                 return BadRequest();
             }
             //Comparamos os atributos que foram modificados através do EF
-            _contexto.Entry(evento).State = EntityState.Modified;
+            _contexto.Entry(presenca).State = EntityState.Modified;
 
             try{
                 await _contexto.SaveChangesAsync();
             }catch(DbUpdateConcurrencyException){
                 // Verificamos se o objeto inserido realmente existe no banco
-                var evento_valido = await _contexto.Evento.FindAsync(id);
+                var presenca_valido = await _contexto.Presenca.FindAsync(id);
 
-                if(evento_valido == null){
+                if(presenca_valido == null){
                     return NotFound();
                 }else{
                     throw;
@@ -82,16 +78,16 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Evento>> Delete(int id){
-            var evento = await _contexto.Evento.FindAsync(id);
-            if(evento == null){
+        public async Task<ActionResult<Presenca>> Delete(int id){
+            var presenca = await _contexto.Presenca.FindAsync(id);
+            if(presenca == null){
                 return NotFound();
             }
 
-            _contexto.Evento.Remove(evento);
+            _contexto.Presenca.Remove(presenca);
             await _contexto.SaveChangesAsync();
 
-            return evento;
+            return presenca;
         }
     }
 }

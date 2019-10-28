@@ -23,6 +23,8 @@ using Newtonsoft.Json;
 
 // Baixar em todo projeto que for usar
 
+// dotnet new webapi
+
 // Baixamos o pacote SQLServer do Entity Framework
 // dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 
@@ -37,7 +39,7 @@ using Newtonsoft.Json;
 
 // Código que criará o nosso Contexto da Base de Dados e nossos Models
 // -o(Cria o diretório) -d(Cria das anotações no banco)
-// dotnet ef dbcontext scaffold "Server=DESKTOP-JHOHBO4\SQLEXPRESS; Database=bdgufos; User Id=sa; Password=132" Microsoft.EntityFrameworkCore.SqlServer -o Models -d
+// dotnet ef dbcontext scaffold "Server=DESKTOP-JHOHBO4\SQLEXPRESS; Database=bdgufos; User Id=sa; Password=132" Microsoft.EntityFrameworkCore.SqlServer -o Domains -d
 
 // SWAGGER - Documentação
 
@@ -104,6 +106,8 @@ namespace backend
             app.UseSwagger();
             // Especificamos o Endpoint na aplicação
             app.UseSwaggerUI(c => {c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");});
+            // Usamos efetivamente a autenticação
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using backend.Models;
+using backend.Domains;
+using backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +15,14 @@ namespace backend.Controllers
     [ApiController]
     public class PresencaController: ControllerBase
     {
-        bdgufosContext _contexto = new bdgufosContext();
+        //bdgufosContext _contexto = new bdgufosContext();
+        PresencaRepository _repositorio = new PresencaRepository();
 
         //GET: api/Presenca
         [HttpGet]
         public async Task<ActionResult<List<Presenca>>> Get()
         {
-            var presencas = await _contexto.Presenca.Include("IdUsuarioNavigation").Include("IdEventoNavigation").ToListAsync();
+            var presencas = await _repositorio.Listar();
             
             if(presencas == null){
                 return NotFound();
@@ -31,7 +33,7 @@ namespace backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Presenca>> Get(int id)
         {
-            var presenca = await _contexto.Presenca.Include("IdUsuarioNavigation").Include("IdEventoNavigation").FirstOrDefaultAsync(p => p.IdPresenca == id);
+            var presenca = await _repositorio.BuscarPorID(id);
             
             if(presenca == null){
                 return NotFound();
@@ -42,10 +44,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<ActionResult<Presenca>> Post(Presenca presenca){
             try{
-                // Tratamos contra ataques de SQL Injection
-                await _contexto.AddAsync(presenca);
-                // Salvamos efetivamente o nosso objeto no banco
-                await _contexto.SaveChangesAsync();
+                await _repositorio.Salvar(presenca);
             }catch(DbUpdateConcurrencyException){
                 throw;
             }
@@ -58,14 +57,11 @@ namespace backend.Controllers
             if(id != presenca.IdPresenca){
                 return BadRequest();
             }
-            //Comparamos os atributos que foram modificados através do EF
-            _contexto.Entry(presenca).State = EntityState.Modified;
-
             try{
-                await _contexto.SaveChangesAsync();
+               await _repositorio.Alterar(presenca);
             }catch(DbUpdateConcurrencyException){
                 // Verificamos se o objeto inserido realmente existe no banco
-                var presenca_valido = await _contexto.Presenca.FindAsync(id);
+                var presenca_valido = await _repositorio.BuscarPorID(id);
 
                 if(presenca_valido == null){
                     return NotFound();
@@ -79,13 +75,12 @@ namespace backend.Controllers
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Presenca>> Delete(int id){
-            var presenca = await _contexto.Presenca.FindAsync(id);
+            var presenca = await _repositorio.BuscarPorID(id);
             if(presenca == null){
                 return NotFound();
             }
 
-            _contexto.Presenca.Remove(presenca);
-            await _contexto.SaveChangesAsync();
+            await _repositorio.Excluir(presenca);
 
             return presenca;
         }

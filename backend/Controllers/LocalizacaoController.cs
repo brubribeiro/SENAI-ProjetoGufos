@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using backend.Models;
+using backend.Domains;
+using backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,15 @@ namespace backend.Controllers
     [ApiController]
     public class LocalizacaoController : ControllerBase
     {
-        bdgufosContext _contexto = new bdgufosContext();
+        //bdgufosContext _contexto = new bdgufosContext();
+
+        LocalizacaoRepository _repositorio = new LocalizacaoRepository();
 
         // GET: api/Localizacao
         [HttpGet]
         public async Task<ActionResult<List<Localizacao>>> Get()
         {
-            var localizacoes = await _contexto.Localizacao.ToListAsync();
+            var localizacoes = await _repositorio.Listar();
 
             if(localizacoes == null){
                 return NotFound();
@@ -29,7 +32,7 @@ namespace backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Localizacao>> Get(int id)
         {
-            var localizacao = await _contexto.Localizacao.FindAsync(id);
+            var localizacao = await _repositorio.BuscarPorID(id);
 
             if(localizacao == null){
                 return NotFound();
@@ -43,10 +46,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<ActionResult<Localizacao>> Post(Localizacao localizacao){
             try{
-                // Tratamos contra ataques de SQL Injection
-                await _contexto.AddAsync(localizacao);
-                // Salvamos efetivamente o nosso objeto no banco
-                await _contexto.SaveChangesAsync();
+                await _repositorio.Salvar(localizacao);
             }catch(DbUpdateConcurrencyException){
                 throw;
             }
@@ -60,14 +60,11 @@ namespace backend.Controllers
             if(id != localizacao.IdLocal){
                 return BadRequest();
             }
-            //Comparamos os atributos que foram modificados através do EF
-            _contexto.Entry(localizacao).State = EntityState.Modified;
-
             try{
-                await _contexto.SaveChangesAsync();
+                await _repositorio.Alterar(localizacao);
             }catch(DbUpdateConcurrencyException){
                 // Verificamos se o objeto inserido realmente existe no banco
-                var localizacao_valido = await _contexto.Localizacao.FindAsync(id);
+                var localizacao_valido = await _repositorio.BuscarPorID(id);
 
                 if(localizacao_valido == null){
                     return NotFound();
@@ -82,13 +79,12 @@ namespace backend.Controllers
         //DELETE api/localizacao/id
         [HttpDelete("{id}")]
         public async Task<ActionResult<Localizacao>> Delete(int id){
-            var localizacao = await _contexto.Localizacao.FindAsync(id);
+            var localizacao = await _repositorio.BuscarPorID(id);
             if(localizacao == null){
                 return NotFound();
             }
 
-            _contexto.Localizacao.Remove(localizacao);
-            await _contexto.SaveChangesAsync();
+            await _repositorio.Excluir(localizacao);
 
             return localizacao;
         }

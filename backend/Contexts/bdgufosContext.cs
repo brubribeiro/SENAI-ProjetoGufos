@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace backend.Models
+namespace backend.Domains
 {
     public partial class bdgufosContext : DbContext
     {

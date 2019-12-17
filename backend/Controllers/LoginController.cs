@@ -19,6 +19,7 @@ namespace backend.Controllers
         // Chamamos nosso contexto da base de dados
         bdgufosContext _context = new bdgufosContext();
 
+
         // Definimos uma variável para percorrer nossos métodos com as configurações obtidas no appsettings.json
         private IConfiguration _config;
 
@@ -46,6 +47,8 @@ namespace backend.Controllers
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.NameId, userInfo.Nome),
                 new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
+                new Claim(ClaimTypes.Role, userInfo.IdTipoUsuario.ToString()),
+                new Claim("Role", userInfo.IdTipoUsuario.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 

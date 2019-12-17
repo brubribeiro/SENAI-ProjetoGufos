@@ -61,6 +61,8 @@ namespace backend
             Configuration = configuration;
         }
 
+        //Habilitar o Cors
+        readonly string PermissaoEntreOrigens = "_PermissaoEntreOrigens";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -93,13 +95,10 @@ namespace backend
                 };
             });
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", 
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader()
-                                      .AllowCredentials());
+            //habilitação do cors
+            services.AddCors (options => {
+                options.AddPolicy (PermissaoEntreOrigens,
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
         }
 
@@ -118,7 +117,10 @@ namespace backend
             // Usamos efetivamente a autenticação
             app.UseAuthentication();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            //Cors
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
 
@@ -128,8 +130,6 @@ namespace backend
             {
                 endpoints.MapControllers();
             });
-
-            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         }
     }
 }
